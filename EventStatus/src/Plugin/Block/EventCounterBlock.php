@@ -21,16 +21,39 @@ class EventCounterBlock extends BlockBase {
   public function build() {
 
     $path = \Drupal::request()->getpathInfo();
-	  $arg  = explode('/',$path);
+	$arg  = explode('/',$path);
 
-	  $service = \Drupal::service('hello_world.calculateDate');
-    if(($arg[1]=="node" && $arg[1]!=null) && ($arg[2]!=null)){
-      return array(
-        '#markup' => $this->t('@name', array(
-          '@name' => $service->calculateDates($arg[2]),
-        )),
-      );
+	/*
+      retrieval of date value for specific event from database
+    */
+
+	if($arg[1]=="node"){
+		$connection = \Drupal::database(); //db name is challenge
+		$options = array();
+		$result = $connection->query("SELECT * FROM node__field_event_date WHERE entity_id = :nid", 
+			array(':nid' => $arg[2]), $options);
+
+		if(!empty($result)){
+			foreach($result as $item) {
+				$record = $item;
+			}
+
+			$service = \Drupal::service('hello_world.calculateDate');
+			if(!empty($record)){
+				$date = $record->field_event_date_value;
+			
+				return array(
+					'#markup' => $this->t('@name', array(
+					'@name' => $service->calculateDates($date),
+					)),
+				);
+			}
+		}
+
+
     }else{
+
+
       return array(
         '#markup' => $this->t('@name', array(
           '@name' => "Please set the block to be visible only on event pages.",

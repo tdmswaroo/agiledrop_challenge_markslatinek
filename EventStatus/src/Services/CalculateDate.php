@@ -16,26 +16,14 @@ class CalculateDate {
 
   }
 
-  public function calculateDates($nid) {
+  public function calculateDates($date) {
     
-    /*
-      retrieval of date value for specific event from database
-    */
-    $connection = \Drupal::database(); //db name is challenge
-
-    $options = array();
-    $result = $connection->query("SELECT field_event_date_value FROM node__field_event_date WHERE entity_id = :nid", array(':nid' => $nid), $options);
-
-    foreach($result as $item) {
-      var_dump($item);
-    }
-
     /*
       Time calculator
     */
     $today = time();
-    $date = strtotime($item->field_event_date_value);
-    $datediff = $date - $today;
+    $givendate = strtotime($date);
+    $datediff = $givendate - $today;
 
     $difference = round($datediff / (60 * 60 * 24));
 
