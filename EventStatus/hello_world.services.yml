@@ -1,0 +1,4 @@
+services:
+  hello_world.calculateDate:
+    class: Drupal\hello_world\Services\CalculateDate
+    arguments: []

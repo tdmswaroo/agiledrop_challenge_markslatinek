@@ -1,0 +1,6 @@
+name: Event Status Module
+description: Creates a block showing if the event has passed or not.
+package: Custom
+type: module
+version: 1.0
+core: 8.x
