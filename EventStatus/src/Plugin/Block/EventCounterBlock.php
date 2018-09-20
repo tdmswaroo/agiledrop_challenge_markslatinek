@@ -20,46 +20,25 @@ class EventCounterBlock extends BlockBase {
    */
   public function build() {
 
-    $path = \Drupal::request()->getpathInfo();
-	$arg  = explode('/',$path);
+  	$node = \Drupal::routeMatch()->getParameter('node');
+	if ($node instanceof \Drupal\node\NodeInterface) {
+	  	$eventDate = $node->get('field_event_date')->value;
+	  	$service = \Drupal::service('hello_world.calculateDate');
+		if(!empty($eventDate)){
+			return array(
+				'#markup' => $this->t('@name', array(
+				'@name' => $service->calculateDates($eventDate),
+				)),
+			);
+		}else{
+	      return array(
+	        '#markup' => $this->t('@name', array(
+	          '@name' => "Please set the block to be visible only on event pages or set the date for the event.",
+	        )),
+	      );
+	    }
+	}
 
-	/*
-      retrieval of date value for specific event from database
-    */
-
-	if($arg[1]=="node"){
-		$connection = \Drupal::database(); //db name is challenge
-		$options = array();
-		$result = $connection->query("SELECT * FROM node__field_event_date WHERE entity_id = :nid", 
-			array(':nid' => $arg[2]), $options);
-
-		if(!empty($result)){
-			foreach($result as $item) {
-				$record = $item;
-			}
-
-			$service = \Drupal::service('hello_world.calculateDate');
-			if(!empty($record)){
-				$date = $record->field_event_date_value;
-			
-				return array(
-					'#markup' => $this->t('@name', array(
-					'@name' => $service->calculateDates($date),
-					)),
-				);
-			}
-		}
-
-
-    }else{
-
-
-      return array(
-        '#markup' => $this->t('@name', array(
-          '@name' => "Please set the block to be visible only on event pages.",
-        )),
-      );
-    }
   }
 
   /**
